@@ -53,16 +53,6 @@
 				this.spriteList = [];
 				
 				//////////////////////////////////////////////////////////////////
-				//TESTTTTTTTTTTTT                                               //
-				//////////////////////////////////////////////////////////////////
-				var s = layer.Sprite('img/test/star.png');
-				s.move(0, 0);
-				s.update();
-				//////////////////////////////////////////////////////////////////
-				//TESTTTTTTTTTTTT                                               //
-				//////////////////////////////////////////////////////////////////
-				
-				//////////////////////////////////////////////////////////////////
 				// UPDATE MOVEMENT                                              //
 				//////////////////////////////////////////////////////////////////
 				_updateMovement = function(sprite) {
@@ -79,13 +69,20 @@
 				_handleClick = function(sprite) {
 					if (that.inputs.mousedown) {
 						if (sjs.collision.isPointInImage(
-							e.clientX - that.player.x - scene.dom.offsetLeft,
-							e.clientY - that.player.y - scene.dom.offsetTop,
-							that.player.w,
-							that.player.h,
-							that.player.img)
+							that.inputs.mouse.position.x - sprite.x,
+							that.inputs.mouse.position.y - sprite.y,
+							sprite.w,
+							sprite.h,
+							sprite.img)
 						) {
-							//something
+							if (sprite.mass == 1) {
+								alert("You got me");
+								sprite.mass = 0;
+								_addPerson();
+							}
+							else {
+								alert("Get away from me!");
+							}
 						}
 					}
 				}
@@ -113,8 +110,8 @@
 				// ADD A PERSON                                                 //
 				//////////////////////////////////////////////////////////////////
 				_addPerson = function() {
-					RandomX = Math.floor((Math.random() * that.scene.w) - 20);
-					RandomY = Math.floor((Math.random() * that.scene.h) - 19);
+					RandomX = Math.floor((Math.random() * (that.scene.w - 20)));
+					RandomY = Math.floor((Math.random() * (that.scene.h - 19)));
 					RandomXv = Math.floor((Math.random() * 4) + 1);
 					RandomYv = Math.floor((Math.random() * 4) + 1);
 					
@@ -125,7 +122,8 @@
 						"w": 20,
 						"h": 19,
 						"xv": RandomXv,
-						"yv": RandomYv
+						"yv": RandomYv,
+						"mass": 1
 					});
 					
 					person.setXOffset(5);
@@ -135,21 +133,6 @@
 				};
 				
 				_addPerson();
-				
-				//////////////////////////////////////////////////////////////////
-				// HOW TO HANDLE MOUSE CLICK                                    //
-				//////////////////////////////////////////////////////////////////
-				scene.dom.onclick = function(e) {
-					if (sjs.collision.isPointInImage(
-						e.clientX - s.x - scene.dom.offsetLeft,
-						e.clientY - s.y - scene.dom.offsetTop,
-						s.w,
-						s.h,
-						s.img)
-					) {
-						alert("star touched");
-					}
-				};
 				
 				//////////////////////////////////////////////////////////////////
 				//Create run method which will be called each time the          //
@@ -167,7 +150,7 @@
 	</script>
 	</head>
 	<body>
-		Click on a point or press qwer
+		Click on the right Dumpling!
 		<span id="debug"></span>
 	</body>
 </html>
