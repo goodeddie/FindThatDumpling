@@ -157,7 +157,7 @@
 				_addNextPerson = function() {
 					rand = Math.floor(Math.random() * that.peopleFound.length - 1);
 					
-					_addPerson(that.people[rand].img, that.people[rand].goodText, that.people[rand].badText);
+					_addPerson(that.people[rand][0], that.people[rand][1], that.people[rand][2]);
 				};
 				
 				//////////////////////////////////////////////////////////////////
