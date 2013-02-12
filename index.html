@@ -27,7 +27,8 @@
 			var scene = sjs.Scene({w:512, h:320});
 			var layer = scene.Layer("game_layer");
 			scene.loadImages([
-				'img/test/star.png',
+				'img/person.png',
+				'img/theperson.png',
 				'img/AllyIcon01.png',
 				],
 				function() {
@@ -50,7 +51,13 @@
 				this.setTicker = function(ticker) {
 					this.ticker = ticker;
 				}
-				this.spriteList = [];
+				this.peopleFound = [];
+				
+				//////////////////////////////////////////////////////////////////
+				// CREATE THE PEOPLE                                            //
+				//////////////////////////////////////////////////////////////////
+				this.people = [];
+				this.people.push(new Array('img/AllyIcon01.png', 'You found me!', 'Get off me!'));
 				
 				//////////////////////////////////////////////////////////////////
 				// UPDATE MOVEMENT                                              //
@@ -75,15 +82,24 @@
 							sprite.h,
 							sprite.img)
 						) {
+							_handleDialogue(sprite, sprite.mass);
 							if (sprite.mass == 1) {
-								alert("You got me");
 								sprite.mass = 0;
-								_addPerson();
-							}
-							else {
-								alert("Get away from me!");
+								_addNextPerson();
 							}
 						}
+					}
+				}
+				
+				//////////////////////////////////////////////////////////////////
+				// HANDLE DIALOGUE                                              //
+				//////////////////////////////////////////////////////////////////
+				_handleDialogue = function(sprite, mass) {
+					if (sprite.mass == 1) {
+						
+					}
+					else {
+						
 					}
 				}
 					
@@ -109,7 +125,7 @@
 				//////////////////////////////////////////////////////////////////
 				// ADD A PERSON                                                 //
 				//////////////////////////////////////////////////////////////////
-				_addPerson = function() {
+				_addPerson = function(img, gText, bText) {
 					RandomX = Math.floor((Math.random() * (that.scene.w - 20)));
 					RandomY = Math.floor((Math.random() * (that.scene.h - 19)));
 					RandomXv = Math.floor((Math.random() * 4) + 1);
@@ -125,27 +141,41 @@
 						"yv": RandomYv,
 						"mass": 1
 					});
-					
 					person.setXOffset(5);
 					person.setYOffset(7);
 					
-					that.spriteList.push(person);
+					person.dialogueImg = img;
+					person.goodText = gText;
+					person.badText = bText;
+					
+					that.peopleFound.push(person);
 				};
 				
-				_addPerson();
+				//////////////////////////////////////////////////////////////////
+				// ADD NEXT PERSON                                              //
+				//////////////////////////////////////////////////////////////////
+				_addNextPerson = function() {
+					rand = Math.floor(Math.random() * that.peopleFound.length - 1);
+					
+					_addPerson(that.people[rand].img, that.people[rand].goodText, that.people[rand].badText);
+				};
 				
 				//////////////////////////////////////////////////////////////////
-				//Create run method which will be called each time the          //
-				//game loop runs                                                //
+				// CREATE GAME LOOP                                             //
 				//////////////////////////////////////////////////////////////////
 				this.run = function() {
 					//Update and Paint all images
-					for (var i in that.spriteList) {
-						_updateMovement(that.spriteList[i]);
+					for (var i in that.peopleFound) {
+						_updateMovement(that.peopleFound[i]);
 						
-						that.spriteList[i].update();
+						that.peopleFound[i].update();
 					}
 				}
+				
+				//////////////////////////////////////////////////////////////////
+				// START THE GAME                                               //
+				//////////////////////////////////////////////////////////////////
+				_addNextPerson();
 			}
 	</script>
 	</head>
