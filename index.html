@@ -57,27 +57,52 @@
 				// CREATE THE PEOPLE                                            //
 				//////////////////////////////////////////////////////////////////
 				this.people = [];
-				this.people.push(new Array('img/AllyIcon01.png', 'You found me!', 'Get off me!'));
+				this.people.push(['img/AllyIcon01.png', 'You found me!', 'Get off me!']);
 				
 				//////////////////////////////////////////////////////////////////
 				// UPDATE MOVEMENT                                              //
 				//////////////////////////////////////////////////////////////////
 				_updateMovement = function(sprite) {
-					_handleClick(sprite);
+					//_handleClick(sprite);
 					
 					_handleBounds(sprite);
 					
 					sprite.applyVelocity();
 				};
 				
+				scene.dom.onclick = function(e) {
+					if(sjs.collision.isPointInImage(
+						e.clientX - that.peopleFound[0].x - scene.dom.offsetLeft,
+						e.clientY - that.peopleFound[0].y - scene.dom.offsetTop,
+						that.peopleFound[0].w,
+						that.peopleFound[0].h,
+						that.peopleFound[0].img)
+					) {
+						alert("star touched");
+					}
+					else {
+						alert("star not touched");
+					}
+				}
+				
 				//////////////////////////////////////////////////////////////////
 				// HANDLE CLICK                                                 //
 				//////////////////////////////////////////////////////////////////
 				_handleClick = function(sprite) {
 					if (that.inputs.mousedown) {
+						/*
+						alert(that.inputs.mouse.position.x);
+						alert(that.inputs.mouse.position.y);
+						
+						alert(sprite.x);
+						alert(sprite.y);
+						
+						alert(that.inputs.mouse.position.x - sprite.x);
+						alert(that.inputs.mouse.position.y - sprite.y);
+						*/
 						if (sjs.collision.isPointInImage(
-							that.inputs.mouse.position.x - sprite.x,
-							that.inputs.mouse.position.y - sprite.y,
+							that.inputs.mouse.position.x - sprite.x,// + scene.dom.offsetLeft,
+							that.inputs.mouse.position.y - sprite.y,// + scene.dom.offsetTop,
 							sprite.w,
 							sprite.h,
 							sprite.img)
@@ -85,8 +110,11 @@
 							_handleDialogue(sprite, sprite.mass);
 							if (sprite.mass == 1) {
 								sprite.mass = 0;
-								_addNextPerson();
+								that.people.splice(_addNextPerson(), 1);
 							}
+						}
+						else {
+							alert("not touched");
 						}
 					}
 				}
@@ -128,8 +156,8 @@
 				_addPerson = function(img, gText, bText) {
 					RandomX = Math.floor((Math.random() * (that.scene.w - 20)));
 					RandomY = Math.floor((Math.random() * (that.scene.h - 19)));
-					RandomXv = Math.floor((Math.random() * 4) + 1);
-					RandomYv = Math.floor((Math.random() * 4) + 1);
+					RandomXv = 0;//Math.floor((Math.random() * 2) + 1);
+					RandomYv = 0;//Math.floor((Math.random() * 2) + 1);
 					
 					person = that.scene.Sprite("img/person.png", {
 						"layer": that.layer,
@@ -153,11 +181,14 @@
 				
 				//////////////////////////////////////////////////////////////////
 				// ADD NEXT PERSON                                              //
+				// - returns person id in array                                 //
 				//////////////////////////////////////////////////////////////////
 				_addNextPerson = function() {
-					rand = Math.floor(Math.random() * that.peopleFound.length - 1);
+					var rand = Math.floor(Math.random() * that.peopleFound.length);
 					
 					_addPerson(that.people[rand][0], that.people[rand][1], that.people[rand][2]);
+					
+					return rand;
 				};
 				
 				//////////////////////////////////////////////////////////////////
@@ -169,6 +200,10 @@
 						_updateMovement(that.peopleFound[i]);
 						
 						that.peopleFound[i].update();
+					}
+					
+					if (that.people.length == 0) {
+						alert("You win!");
 					}
 				}
 				
